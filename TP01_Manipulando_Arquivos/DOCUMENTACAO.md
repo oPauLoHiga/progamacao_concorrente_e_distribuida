@@ -33,7 +33,7 @@ Os arquivos principais para entrega sao:
 Tambem existe um `.gitignore` para evitar que a base de dados, arquivos gerados
 e caches sejam enviados por engano.
 
-no enunciado pede para enviar apenas os arquivos fonte
+O enunciado pede para enviar apenas os arquivos fonte
 desenvolvidos. Por isso, os arquivos CSV da base, arquivos de saida e o PDF do
 enunciado nao foram enviados como parte do codigo.
 
@@ -133,7 +133,7 @@ municipio, por exemplo `MACAPA.txt`.
 
 ## 7. Formulas usadas
 
-ao desenvolver os calculos, todas as subtracoes deveriam ser trocadas por adicoes. 
+Ao desenvolver os calculos, todas as subtracoes deveriam ser trocadas por adicoes. 
 Por isso, os denominadores abaixo usam soma.
 
 ### Meta1
@@ -195,7 +195,7 @@ os arquivos da base.
 Abra o terminal na pasta do trabalho:
 
 ```powershell
-cd "C:\progamacao_concorrente_e_distribuida\TP01_Manipulando_Arquivos"
+cd TP01_Manipulando_Arquivos
 ```
 
 Para abrir o menu:
