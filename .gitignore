@@ -1,14 +1,8 @@
-﻿# Python
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
 
-# Ambientes virtuais
-.venv/
-venv/
-env/
-
-# IDE/editor
+# Editor
 .idea/
 .vscode/
 
@@ -18,14 +12,11 @@ env/
 *.pdf
 *.zip
 saida/
-_verificacao/
-**/saida/
-**/saida_serial/
-**/saida_paralela/
+saida_serial/
+saida_paralela/
 TP01_Manipulando_Arquivos/Base de Dados/
 TP01_Manipulando_Arquivos/saida/
-TP01_Manipulando_Arquivos/_verificacao/
 
-# Sistema operacional
+# Sistema
 Thumbs.db
 .DS_Store

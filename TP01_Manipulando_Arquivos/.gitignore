@@ -1,33 +1,13 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Ambientes virtuais
-.venv/
-venv/
-env/
-
-# Arquivos de IDE/editor
-.idea/
-.vscode/
+# Arquivos da base e enunciado local
+Base de Dados/
+*.pdf
 
 # Saidas geradas pelo programa
-Base de Dados/
 saida/
-_verificacao/
-saida_serial/
-saida_paralela/
 *.csv
 *.txt
-*.pdf
 *.zip
 
-# Logs e arquivos temporarios
-*.log
-*.tmp
-*.bak
-
-# Sistema operacional
-Thumbs.db
-.DS_Store
+# Cache do Python
+__pycache__/
+*.py[cod]

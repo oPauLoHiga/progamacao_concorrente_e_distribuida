@@ -1,4 +1,4 @@
-# TP01 - Manipulando arquivos CSV
+﻿# TP01 - Manipulando arquivos CSV
 
 ## 1. Sobre o trabalho
 
@@ -187,16 +187,15 @@ e mais simples e tem menos sobrecarga.
 Na execucao paralela, o trabalho e dividido por arquivo. Cada worker processa
 uma parte da base e, depois, os resultados parciais sao reunidos.
 
-Em algumas partes, o codigo tenta usar `ProcessPoolExecutor`. Se o ambiente do
-Windows bloquear a criacao de processos, o programa usa threads como
-alternativa para nao interromper a execucao.
+Na versao paralela foi usado `ThreadPoolExecutor`, dividindo o trabalho entre
+os arquivos da base.
 
 ## 9. Como executar
 
 Abra o terminal na pasta do trabalho:
 
 ```powershell
-cd "C:\"
+cd "C:\progamacao_concorrente_e_distribuida\TP01_Manipulando_Arquivos"
 ```
 
 Para abrir o menu:
@@ -248,10 +247,10 @@ Foi executado um benchmark completo usando a base fornecida e o municipio
 
 | Funcionalidade | Serial (s) | Paralelo (s) | Speedup |
 |---|---:|---:|---:|
-| Concatenar arquivos | 0.1356 | 0.1099 | 1.2337 |
-| Resumo por municipio | 1.6335 | 2.1032 | 0.7767 |
-| Ranking de tribunais | 1.5953 | 2.0826 | 0.7660 |
-| Filtro por municipio | 0.6680 | 0.8684 | 0.7692 |
+| Concatenar arquivos | 0.1959 | 0.1176 | 1.6653 |
+| Resumo por municipio | 1.7297 | 2.2322 | 0.7749 |
+| Ranking de tribunais | 1.6658 | 2.1175 | 0.7867 |
+| Filtro por municipio | 0.6769 | 0.8299 | 0.8157 |
 
 Os tempos podem mudar de uma execucao para outra, dependendo do computador, do
 disco e da quantidade de workers.
