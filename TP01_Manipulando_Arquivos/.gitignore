@@ -16,9 +16,12 @@ env/
 Base de Dados/
 saida/
 _verificacao/
+saida_serial/
+saida_paralela/
 *.csv
 *.txt
 *.pdf
+*.zip
 
 # Logs e arquivos temporarios
 *.log

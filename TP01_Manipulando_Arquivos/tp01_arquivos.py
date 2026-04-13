@@ -1,3 +1,11 @@
+"""TP01 - Manipulacao de arquivos CSV.
+
+O modulo implementa as quatro funcionalidades solicitadas no trabalho:
+concatenacao dos arquivos da base, resumo por municipio, ranking por tribunal e
+filtro por municipio. Cada funcionalidade possui uma versao serial e uma versao
+paralela, alem de rotinas de benchmark para comparar os tempos de execucao.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -12,6 +20,7 @@ from time import perf_counter
 from typing import Callable
 
 
+# Configuracao do projeto
 SCRIPT_DIR = Path(__file__).resolve().parent
 BASE_DIR_CANDIDATES = (
     SCRIPT_DIR / "Base de Dados",
@@ -71,6 +80,7 @@ def localizar_base_padrao() -> Path:
 DEFAULT_BASE_DIR = localizar_base_padrao()
 
 
+# Modelo usado no relatorio de tempos
 @dataclass
 class TempoExecucao:
     funcionalidade: str
@@ -84,6 +94,7 @@ class TempoExecucao:
         return self.tempo_serial / self.tempo_paralelo
 
 
+# Utilitarios de arquivos, texto e conversao numerica
 def listar_arquivos_csv(base_dir: Path | str) -> list[Path]:
     base_path = Path(base_dir)
     if not base_path.exists():
@@ -156,7 +167,14 @@ def mesclar_totais(destino: dict[str, float], origem: dict[str, float]) -> None:
         destino[campo] = destino.get(campo, 0.0) + origem.get(campo, 0.0)
 
 
+# Calculos das metas do enunciado
 def calcular_metas(totais: dict[str, float]) -> dict[str, float]:
+    """Calcula as metas usando somatorios agrupados.
+
+    Conforme a orientacao do professor, as subtracoes das formulas originais
+    foram substituidas por adicoes nos denominadores.
+    """
+
     meta1_denominador = (
         totais.get("casos_novos_2026", 0.0)
         + totais.get("dessobrestados_2026", 0.0)
@@ -207,10 +225,13 @@ def _conteudo_sem_cabecalho(path_str: str) -> str:
         return arquivo.read()
 
 
+# Funcionalidade 1 - concatenar arquivos
 def concatenar_arquivos_serial(
     base_dir: Path | str = DEFAULT_BASE_DIR,
     output_path: Path | str | None = None,
 ) -> Path:
+    """Concatena todos os CSVs da base em uma unica saida, de forma serial."""
+
     arquivos = listar_arquivos_csv(base_dir)
     if output_path is None:
         output_path = DEFAULT_OUTPUT_DIR / "base_concatenada_serial.csv"
@@ -235,6 +256,8 @@ def concatenar_arquivos_paralelo(
     output_path: Path | str | None = None,
     max_workers: int | None = None,
 ) -> Path:
+    """Concatena todos os CSVs da base usando leitura paralela por arquivo."""
+
     arquivos = listar_arquivos_csv(base_dir)
     if output_path is None:
         output_path = DEFAULT_OUTPUT_DIR / "base_concatenada_paralelo.csv"
@@ -271,6 +294,7 @@ def _agrupar_arquivo(args: tuple[str, str]) -> dict[str, dict[str, float]]:
     return grupos
 
 
+# Agregacao compartilhada pelas funcionalidades 2 e 3
 def mapear_paralelo(
     funcao: Callable,
     argumentos: list[tuple[str, str]],
@@ -319,6 +343,7 @@ def mesclar_grupos(
         mesclar_totais(totais_destino, totais_origem)
 
 
+# Funcionalidade 2 - resumo por municipio
 def escrever_resumo_municipios(
     grupos: dict[str, dict[str, float]],
     output_path: Path | str,
@@ -350,6 +375,8 @@ def gerar_resumo_municipios_serial(
     base_dir: Path | str = DEFAULT_BASE_DIR,
     output_path: Path | str | None = None,
 ) -> Path:
+    """Gera o CSV de resumo por municipio na versao serial."""
+
     if output_path is None:
         output_path = DEFAULT_OUTPUT_DIR / "resumo_municipios_serial.csv"
     grupos = agrupar_serial(base_dir, "municipio_oj")
@@ -361,12 +388,15 @@ def gerar_resumo_municipios_paralelo(
     output_path: Path | str | None = None,
     max_workers: int | None = None,
 ) -> Path:
+    """Gera o CSV de resumo por municipio na versao paralela."""
+
     if output_path is None:
         output_path = DEFAULT_OUTPUT_DIR / "resumo_municipios_paralelo.csv"
     grupos = agrupar_paralelo(base_dir, "municipio_oj", max_workers)
     return escrever_resumo_municipios(grupos, output_path)
 
 
+# Funcionalidade 3 - ranking dos tribunais
 def escrever_ranking_tribunais(
     grupos: dict[str, dict[str, float]],
     output_path: Path | str,
@@ -402,6 +432,8 @@ def gerar_ranking_tribunais_serial(
     base_dir: Path | str = DEFAULT_BASE_DIR,
     output_path: Path | str | None = None,
 ) -> Path:
+    """Gera o ranking dos 10 tribunais com maior Meta1 na versao serial."""
+
     if output_path is None:
         output_path = DEFAULT_OUTPUT_DIR / "ranking_tribunais_serial.csv"
     grupos = agrupar_serial(base_dir, "sigla_tribunal")
@@ -413,12 +445,15 @@ def gerar_ranking_tribunais_paralelo(
     output_path: Path | str | None = None,
     max_workers: int | None = None,
 ) -> Path:
+    """Gera o ranking dos 10 tribunais com maior Meta1 na versao paralela."""
+
     if output_path is None:
         output_path = DEFAULT_OUTPUT_DIR / "ranking_tribunais_paralelo.csv"
     grupos = agrupar_paralelo(base_dir, "sigla_tribunal", max_workers)
     return escrever_ranking_tribunais(grupos, output_path)
 
 
+# Funcionalidade 4 - filtro por municipio
 def _filtrar_arquivo(args: tuple[str, str]) -> list[list[str]]:
     path_str, municipio_normalizado = args
     linhas_filtradas: list[list[str]] = []
@@ -442,6 +477,8 @@ def filtrar_municipio_serial(
     base_dir: Path | str = DEFAULT_BASE_DIR,
     output_path: Path | str | None = None,
 ) -> Path:
+    """Gera arquivo TXT com as linhas do municipio informado, de forma serial."""
+
     arquivos = listar_arquivos_csv(base_dir)
     cabecalho = ler_cabecalho(base_dir)
     municipio_normalizado = normalizar_texto(municipio)
@@ -466,6 +503,8 @@ def filtrar_municipio_paralelo(
     output_path: Path | str | None = None,
     max_workers: int | None = None,
 ) -> Path:
+    """Gera arquivo TXT com as linhas do municipio informado, em paralelo."""
+
     arquivos = listar_arquivos_csv(base_dir)
     cabecalho = ler_cabecalho(base_dir)
     municipio_normalizado = normalizar_texto(municipio)
@@ -484,6 +523,7 @@ def filtrar_municipio_paralelo(
     return output_path
 
 
+# Medicao de tempo, benchmark e interface de execucao
 def medir_tempo(funcao: Callable[[], Path]) -> tuple[Path, float]:
     inicio = perf_counter()
     resultado = funcao()
