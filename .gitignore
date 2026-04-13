@@ -1,0 +1,27 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+
+# IDE/editor
+.idea/
+.vscode/
+
+# Bases e saidas locais
+*.csv
+*.txt
+*.pdf
+saida/
+_verificacao/
+TP01_Manipulando_Arquivos/Base de Dados/
+TP01_Manipulando_Arquivos/saida/
+TP01_Manipulando_Arquivos/_verificacao/
+
+# Sistema operacional
+Thumbs.db
+.DS_Store

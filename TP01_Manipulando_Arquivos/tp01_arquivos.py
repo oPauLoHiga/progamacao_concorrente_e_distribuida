@@ -16,14 +16,6 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 BASE_DIR_CANDIDATES = (
     SCRIPT_DIR / "Base de Dados",
     SCRIPT_DIR.parent / "Base de Dados",
-    Path(
-        r"C:\Users\paulo\OneDrive\Documentos\Github_Desktop_Arquivos"
-        r"\progamacao_concorrente_e_distribuida\TP01_Manipulando_Arquivos\Base de Dados"
-    ),
-    Path(
-        r"C:\Users\paulo\OneDrive\Documentos\Github_Desktop_Arquivos"
-        r"\progamacao_concorrente_e_distribuida\Base de Dados"
-    ),
 )
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR / "saida"
 INPUT_ENCODING = "utf-8-sig"

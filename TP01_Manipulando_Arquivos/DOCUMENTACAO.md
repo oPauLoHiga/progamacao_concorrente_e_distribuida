@@ -46,10 +46,10 @@ A base usada durante o desenvolvimento possuia:
 - 205.122 registros de dados;
 - um mesmo cabecalho em todos os arquivos.
 
-No repositorio da disciplina, a base esta em:
+No repositorio da disciplina, a base esta dentro da pasta do proprio trabalho:
 
 ```text
-C:\Users\paulo\OneDrive\Documentos\Github_Desktop_Arquivos\progamacao_concorrente_e_distribuida\TP01_Manipulando_Arquivos\Base de Dados
+TP01_Manipulando_Arquivos\Base de Dados
 ```
 
 O codigo tenta localizar automaticamente a pasta `Base de Dados` em locais
@@ -226,7 +226,7 @@ Desvantagens:
 Abra o terminal na pasta do projeto:
 
 ```powershell
-cd "C:\Users\paulo\OneDrive\Documentos\Estudos\codGPT\TP01_Manipulando_Arquivos"
+cd "C:\Users\paulo\OneDrive\Documentos\Github_Desktop_Arquivos\progamacao_concorrente_e_distribuida\TP01_Manipulando_Arquivos"
 ```
 
 Executar o menu interativo:
@@ -324,10 +324,10 @@ Os tempos obtidos foram:
 
 | Funcionalidade | Serial (s) | Paralelo (s) | Speedup |
 |---|---:|---:|---:|
-| Concatenar arquivos | 0.1054 | 0.0899 | 1.1725 |
-| Resumo por municipio | 1.5902 | 1.9669 | 0.8085 |
-| Ranking de tribunais | 1.5685 | 1.9458 | 0.8061 |
-| Filtro por municipio | 0.6617 | 0.8129 | 0.8139 |
+| Concatenar arquivos | 0.1149 | 0.1034 | 1.1110 |
+| Resumo por municipio | 1.6585 | 2.0714 | 0.8007 |
+| Ranking de tribunais | 1.5770 | 2.0280 | 0.7776 |
+| Filtro por municipio | 0.6591 | 0.8217 | 0.8022 |
 
 Os tempos podem variar de acordo com o computador, disco, quantidade de workers
 e permissoes do sistema operacional.
