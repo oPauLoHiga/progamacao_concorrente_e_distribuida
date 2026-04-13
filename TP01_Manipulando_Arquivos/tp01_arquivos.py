@@ -1,13 +1,6 @@
-"""TP01 - Manipulacao de arquivos CSV.
-
-O modulo implementa as quatro funcionalidades solicitadas no trabalho:
-concatenacao dos arquivos da base, resumo por municipio, ranking por tribunal e
-filtro por municipio. Cada funcionalidade possui uma versao serial e uma versao
-paralela, alem de rotinas de benchmark para comparar os tempos de execucao.
-"""
+"""TP01 - Manipulacao de arquivos CSV."""
 
 from __future__ import annotations
-
 import argparse
 import csv
 import multiprocessing
@@ -18,7 +11,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from time import perf_counter
 from typing import Callable
-
 
 # Configuracao do projeto
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -79,7 +71,6 @@ def localizar_base_padrao() -> Path:
 
 DEFAULT_BASE_DIR = localizar_base_padrao()
 
-
 # Modelo usado no relatorio de tempos
 @dataclass
 class TempoExecucao:
@@ -92,7 +83,6 @@ class TempoExecucao:
         if self.tempo_paralelo == 0:
             return 0.0
         return self.tempo_serial / self.tempo_paralelo
-
 
 # Utilitarios de arquivos, texto e conversao numerica
 def listar_arquivos_csv(base_dir: Path | str) -> list[Path]:
@@ -112,19 +102,16 @@ def garantir_pasta_saida(caminho: Path | str) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     return path
 
-
 def normalizar_texto(texto: str) -> str:
     texto_ascii = unicodedata.normalize("NFKD", texto or "")
     texto_ascii = texto_ascii.encode("ascii", "ignore").decode("ascii")
     texto_ascii = re.sub(r"\s+", " ", texto_ascii.strip())
     return texto_ascii.upper()
 
-
 def nome_arquivo_municipio(municipio: str) -> str:
     nome = normalizar_texto(municipio)
     nome = re.sub(r"[^A-Z0-9_-]+", "_", nome).strip("_")
     return nome or "MUNICIPIO"
-
 
 def converter_numero(valor: str | None) -> float:
     if valor is None:
@@ -169,11 +156,6 @@ def mesclar_totais(destino: dict[str, float], origem: dict[str, float]) -> None:
 
 # Calculos das metas do enunciado
 def calcular_metas(totais: dict[str, float]) -> dict[str, float]:
-    """Calcula as metas usando somatorios agrupados.
-
-    Conforme a orientacao do professor, as subtracoes das formulas originais
-    foram substituidas por adicoes nos denominadores.
-    """
 
     meta1_denominador = (
         totais.get("casos_novos_2026", 0.0)
@@ -230,7 +212,6 @@ def concatenar_arquivos_serial(
     base_dir: Path | str = DEFAULT_BASE_DIR,
     output_path: Path | str | None = None,
 ) -> Path:
-    """Concatena todos os CSVs da base em uma unica saida, de forma serial."""
 
     arquivos = listar_arquivos_csv(base_dir)
     if output_path is None:
@@ -256,7 +237,6 @@ def concatenar_arquivos_paralelo(
     output_path: Path | str | None = None,
     max_workers: int | None = None,
 ) -> Path:
-    """Concatena todos os CSVs da base usando leitura paralela por arquivo."""
 
     arquivos = listar_arquivos_csv(base_dir)
     if output_path is None:
@@ -292,7 +272,6 @@ def _agrupar_arquivo(args: tuple[str, str]) -> dict[str, dict[str, float]]:
                 totais[campo] += converter_numero(linha.get(campo))
 
     return grupos
-
 
 # Agregacao compartilhada pelas funcionalidades 2 e 3
 def mapear_paralelo(
@@ -333,7 +312,6 @@ def agrupar_paralelo(
 
     return grupos
 
-
 def mesclar_grupos(
     destino: dict[str, dict[str, float]],
     origem: dict[str, dict[str, float]],
@@ -341,7 +319,6 @@ def mesclar_grupos(
     for chave, totais_origem in origem.items():
         totais_destino = destino.setdefault(chave, novos_totais())
         mesclar_totais(totais_destino, totais_origem)
-
 
 # Funcionalidade 2 - resumo por municipio
 def escrever_resumo_municipios(
@@ -370,25 +347,21 @@ def escrever_resumo_municipios(
 
     return output_path
 
-
 def gerar_resumo_municipios_serial(
     base_dir: Path | str = DEFAULT_BASE_DIR,
     output_path: Path | str | None = None,
 ) -> Path:
-    """Gera o CSV de resumo por municipio na versao serial."""
 
     if output_path is None:
         output_path = DEFAULT_OUTPUT_DIR / "resumo_municipios_serial.csv"
     grupos = agrupar_serial(base_dir, "municipio_oj")
     return escrever_resumo_municipios(grupos, output_path)
 
-
 def gerar_resumo_municipios_paralelo(
     base_dir: Path | str = DEFAULT_BASE_DIR,
     output_path: Path | str | None = None,
     max_workers: int | None = None,
 ) -> Path:
-    """Gera o CSV de resumo por municipio na versao paralela."""
 
     if output_path is None:
         output_path = DEFAULT_OUTPUT_DIR / "resumo_municipios_paralelo.csv"
@@ -432,7 +405,6 @@ def gerar_ranking_tribunais_serial(
     base_dir: Path | str = DEFAULT_BASE_DIR,
     output_path: Path | str | None = None,
 ) -> Path:
-    """Gera o ranking dos 10 tribunais com maior Meta1 na versao serial."""
 
     if output_path is None:
         output_path = DEFAULT_OUTPUT_DIR / "ranking_tribunais_serial.csv"
@@ -445,7 +417,6 @@ def gerar_ranking_tribunais_paralelo(
     output_path: Path | str | None = None,
     max_workers: int | None = None,
 ) -> Path:
-    """Gera o ranking dos 10 tribunais com maior Meta1 na versao paralela."""
 
     if output_path is None:
         output_path = DEFAULT_OUTPUT_DIR / "ranking_tribunais_paralelo.csv"
@@ -477,7 +448,6 @@ def filtrar_municipio_serial(
     base_dir: Path | str = DEFAULT_BASE_DIR,
     output_path: Path | str | None = None,
 ) -> Path:
-    """Gera arquivo TXT com as linhas do municipio informado, de forma serial."""
 
     arquivos = listar_arquivos_csv(base_dir)
     cabecalho = ler_cabecalho(base_dir)
@@ -503,7 +473,6 @@ def filtrar_municipio_paralelo(
     output_path: Path | str | None = None,
     max_workers: int | None = None,
 ) -> Path:
-    """Gera arquivo TXT com as linhas do municipio informado, em paralelo."""
 
     arquivos = listar_arquivos_csv(base_dir)
     cabecalho = ler_cabecalho(base_dir)

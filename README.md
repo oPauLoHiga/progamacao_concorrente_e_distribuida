@@ -14,8 +14,6 @@ Arquivos principais:
 - `ex14.py`, `ex15.py` e `ex16.py`: exercicios praticos;
 - `Painel_26.csv`: base local de apoio para os exemplos com pandas, ignorada pelo Git por ser grande.
 
-Os arquivos dessa pasta foram mantidos no formato original dos exemplos de aula.
-
 ### `TP01_Manipulando_Arquivos/`
 
 Contem o Trabalho Pratico 01. O objetivo do TP01 e manipular arquivos CSV da base da Justica Eleitoral usando versoes seriais e paralelas.

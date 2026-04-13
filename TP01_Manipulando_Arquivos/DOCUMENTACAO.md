@@ -33,9 +33,9 @@ Os arquivos principais para entrega sao:
 Tambem existe um `.gitignore` para evitar que a base de dados, arquivos gerados
 e caches sejam enviados por engano.
 
-Importante: o enunciado pede para enviar apenas os arquivos fonte
+no enunciado pede para enviar apenas os arquivos fonte
 desenvolvidos. Por isso, os arquivos CSV da base, arquivos de saida e o PDF do
-enunciado nao devem ser enviados como parte do codigo.
+enunciado nao foram enviados como parte do codigo.
 
 ## 4. Base de dados
 
@@ -133,9 +133,8 @@ municipio, por exemplo `MACAPA.txt`.
 
 ## 7. Formulas usadas
 
-O professor colocou uma observacao importante: ao desenvolver os calculos,
-todas as subtracoes deveriam ser trocadas por adicoes. Por isso, os
-denominadores abaixo usam soma.
+ao desenvolver os calculos, todas as subtracoes deveriam ser trocadas por adicoes. 
+Por isso, os denominadores abaixo usam soma.
 
 ### Meta1
 
@@ -197,7 +196,7 @@ alternativa para nao interromper a execucao.
 Abra o terminal na pasta do trabalho:
 
 ```powershell
-cd "C:\Users\paulo\OneDrive\Documentos\Github_Desktop_Arquivos\progamacao_concorrente_e_distribuida\TP01_Manipulando_Arquivos"
+cd "C:\"
 ```
 
 Para abrir o menu:
@@ -281,8 +280,7 @@ Na ultima verificacao:
 
 ## 14. Conclusao
 
-O trabalho ficou de acordo com o enunciado. Foram implementadas as quatro
-funcionalidades pedidas, com versoes seriais e paralelas, calculo das metas,
+Foram implementadas as quatro funcionalidades pedidas, com versoes seriais e paralelas, calculo das metas,
 medicao de tempo e calculo de speedup.
 
 A principal observacao dos testes e que paralelizar nem sempre deixa o programa
