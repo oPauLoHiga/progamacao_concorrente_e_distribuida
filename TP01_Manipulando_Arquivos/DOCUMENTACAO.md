@@ -26,6 +26,9 @@ Foram implementadas as seguintes funcionalidades:
 
 Para cada funcionalidade existe uma versao serial e uma versao paralela.
 
+O programa tambem possui um menu interativo, atendendo ao pedido de interface
+presente no enunciado.
+
 ## 3. Arquivos da entrega
 
 Os arquivos principais da entrega sao:
@@ -93,15 +96,15 @@ Quando o filtro e comparado nos dois modos, os arquivos ficam separados em
 
 ## 7. Formulas usadas
 
-No enunciado foi considerado que as subtracoes deveriam ser trocadas por
-adicoes. Por isso, os denominadores ficaram assim:
+Os calculos seguem as formulas do enunciado visivel. Os denominadores ficaram
+assim:
 
 ### Meta1
 
 ```text
 sum(julgados_2026)
 ------------------------------------------------------------- * 100
-sum(casos_novos_2026) + sum(dessobrestados_2026) + sum(suspensos_2026)
+sum(casos_novos_2026) - sum(dessobrestados_2026) - sum(suspensos_2026)
 ```
 
 ### Meta2A
@@ -109,7 +112,7 @@ sum(casos_novos_2026) + sum(dessobrestados_2026) + sum(suspensos_2026)
 ```text
 sum(julgm2_a)
 ------------------------------------ * (1000 / 7)
-sum(distm2_a) + sum(suspm2_a)
+sum(distm2_a) - sum(suspm2_a)
 ```
 
 ### Meta2Ant
@@ -117,7 +120,7 @@ sum(distm2_a) + sum(suspm2_a)
 ```text
 sum(julgm2_ant)
 -------------------------------------------------- * 100
-sum(distm2_ant) + sum(suspm2_ant) + sum(desom2_ant)
+sum(distm2_ant) - sum(suspm2_ant) - sum(desom2_ant)
 ```
 
 ### Meta4A
@@ -125,7 +128,7 @@ sum(distm2_ant) + sum(suspm2_ant) + sum(desom2_ant)
 ```text
 sum(julgm4_a)
 ------------------------------------ * 100
-sum(distm4_a) + sum(suspm4_a)
+sum(distm4_a) - sum(suspm4_a)
 ```
 
 ### Meta4B
@@ -133,7 +136,7 @@ sum(distm4_a) + sum(suspm4_a)
 ```text
 sum(julgm4_b)
 ------------------------------------ * 100
-sum(distm4_b) + sum(suspm4_b)
+sum(distm4_b) - sum(suspm4_b)
 ```
 
 Quando o denominador fica zero, o programa retorna `0.0000`.
@@ -152,6 +155,16 @@ Depois disso, abra o terminal na pasta do trabalho:
 cd TP01_Manipulando_Arquivos
 ```
 
+Para usar o menu interativo:
+
+```powershell
+python tp01_arquivos.py
+```
+
+No menu, todas as opcoes executam automaticamente a versao serial e a versao
+paralela da funcionalidade escolhida, exibindo tambem o speedup. No caso do
+filtro e do relatorio, o programa pede o municipio no terminal.
+
 Para gerar todos os arquivos e o `relatorio.csv`:
 
 ```powershell
@@ -165,17 +178,18 @@ python tp01_arquivos.py --acao concatenar --modo ambos
 python tp01_arquivos.py --acao resumo --modo ambos
 python tp01_arquivos.py --acao ranking --modo ambos
 python tp01_arquivos.py --acao filtrar --modo serial --municipio NOME_DO_MUNICIPIO
+python tp01_arquivos.py --acao relatorio --modo ambos --municipio NOME_DO_MUNICIPIO
 ```
 
 Tambem e possivel mudar a pasta da base e a pasta de saida:
 
 ```powershell
-python tp01_arquivos.py --acao relatorio --municipio NOME_DO_MUNICIPIO --base-dir "C:\caminho\para\Base de Dados"
-python tp01_arquivos.py --acao relatorio --municipio NOME_DO_MUNICIPIO --output-dir "C:\temp\saida_tp01"
+python tp01_arquivos.py --acao relatorio --base-dir "C:\caminho\para\Base de Dados"
+python tp01_arquivos.py --acao relatorio --output-dir "C:\temp\saida_tp01"
 ```
 
-Se o municipio nao for informado no filtro ou no relatorio, o programa pede esse
-valor no terminal.
+Se o municipio nao for informado no filtro, o programa pede esse valor no
+terminal.
 
 ## 9. Relatorio de tempos
 
@@ -199,17 +213,18 @@ Interpretacao:
 
 ## 10. Resultado da execucao de teste
 
-Na validacao final do programa, os tempos obtidos foram:
+Na validacao final do programa, usando o municipio `BRASILEIA` no filtro e no
+relatorio, os tempos obtidos foram:
 
 | Funcionalidade | Serial (s) | Paralelo (s) | Speedup |
 |---|---:|---:|---:|
-| Concatenar arquivos | 1.8084 | 1.6791 | 1.0770 |
-| Resumo por municipio | 4.2492 | 4.1985 | 1.0121 |
-| Ranking de tribunais | 4.1493 | 4.0602 | 1.0220 |
-| Filtro por municipio | 0.8958 | 0.8224 | 1.0892 |
+| Concatenar arquivos | 1.5961 | 1.6131 | 0.9894 |
+| Resumo por municipio | 4.3793 | 4.1083 | 1.0660 |
+| Resumo dos 10 tribunais | 4.1761 | 4.0677 | 1.0267 |
+| Filtro por municipio | 0.8585 | 0.7764 | 1.1058 |
 
 As saidas seriais e paralelas tiveram o mesmo conteudo nas quatro
-funcionalidades.
+funcionalidades, mudando apenas o tempo de execucao.
 
 ## 11. Pros e contras
 
@@ -254,7 +269,7 @@ antes.
 O trabalho ficou atendendo exatamente as quatro funcionalidades pedidas, com
 versao serial e versao paralela para cada uma.
 
-Na validacao final desta versao com `pandas`, a versao paralela ficou levemente
-melhor nas quatro funcionalidades. Mesmo assim, as diferencas foram pequenas em
-alguns casos, o que mostra que a paralelizacao precisa ser avaliada junto com a
-sobrecarga criada no processamento.
+Na validacao final desta versao com `pandas`, a versao paralela ficou melhor em
+tres funcionalidades e muito proxima da serial na concatenacao. O principal
+objetivo do trabalho foi mantido: resolver as quatro funcionalidades, comparar
+os tempos e calcular o speedup de forma simples e organizada.

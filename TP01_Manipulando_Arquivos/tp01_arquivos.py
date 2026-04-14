@@ -6,11 +6,12 @@ from time import perf_counter
 
 import pandas as pd
 
-BASE_DIR = Path(__file__).parent / "Base de Dados"
-OUTPUT_DIR = Path(__file__).parent / "saida"
-READ_ENCODING = "utf-8-sig"
 
-SUM_COLUMNS = [
+PASTA_BASE_PADRAO = Path(__file__).parent / "Base de Dados"
+PASTA_SAIDA_PADRAO = Path(__file__).parent / "saida"
+ENCODING_LEITURA = "utf-8-sig"
+
+COLUNAS_SOMA = [
     "julgados_2026",
     "casos_novos_2026",
     "suspensos_2026",
@@ -30,13 +31,13 @@ SUM_COLUMNS = [
     "suspm4_b",
 ]
 
-META_COLUMNS = ["Meta1", "Meta2A", "Meta2Ant", "Meta4A", "Meta4B"]
+COLUNAS_METAS = ["Meta1", "Meta2A", "Meta2Ant", "Meta4A", "Meta4B"]
 
 
-def listar_csvs(base_dir):
-    arquivos = sorted(Path(base_dir).glob("*.csv"))
+def listar_csvs(pasta_base):
+    arquivos = sorted(Path(pasta_base).glob("*.csv"))
     if not arquivos:
-        raise FileNotFoundError(f"Nenhum arquivo CSV encontrado em: {base_dir}")
+        raise FileNotFoundError(f"Nenhum arquivo CSV encontrado em: {pasta_base}")
     return arquivos
 
 
@@ -55,11 +56,11 @@ def nome_arquivo_municipio(municipio):
 
 
 def ler_csv(caminho_csv):
-    return pd.read_csv(caminho_csv, dtype=str, encoding=READ_ENCODING)
+    return pd.read_csv(caminho_csv, dtype=str, encoding=ENCODING_LEITURA)
 
 
-def carregar_base(base_dir=BASE_DIR, paralelo=False, workers=None):
-    arquivos = listar_csvs(base_dir)
+def carregar_base(pasta_base=PASTA_BASE_PADRAO, paralelo=False, workers=None):
+    arquivos = listar_csvs(pasta_base)
 
     if paralelo:
         with ThreadPoolExecutor(max_workers=workers) as executor:
@@ -86,9 +87,9 @@ def preparar_coluna_numerica(serie):
 def preparar_base(df):
     base = df.copy()
 
-    for coluna in [coluna for coluna in SUM_COLUMNS if coluna not in base]:
+    for coluna in [coluna for coluna in COLUNAS_SOMA if coluna not in base]:
         base[coluna] = ""
-    base[SUM_COLUMNS] = base[SUM_COLUMNS].apply(preparar_coluna_numerica)
+    base[COLUNAS_SOMA] = base[COLUNAS_SOMA].apply(preparar_coluna_numerica)
 
     for coluna in ["municipio_oj", "sigla_tribunal"]:
         if coluna not in base:
@@ -109,27 +110,27 @@ def adicionar_metas(df):
     return df.assign(
         Meta1=calcular_meta(
             df["julgados_2026"],
-            df["casos_novos_2026"] + df["dessobrestados_2026"] + df["suspensos_2026"],
+            df["casos_novos_2026"] - df["dessobrestados_2026"] - df["suspensos_2026"],
             100,
         ),
         Meta2A=calcular_meta(
             df["julgm2_a"],
-            df["distm2_a"] + df["suspm2_a"],
+            df["distm2_a"] - df["suspm2_a"],
             1000 / 7,
         ),
         Meta2Ant=calcular_meta(
             df["julgm2_ant"],
-            df["distm2_ant"] + df["suspm2_ant"] + df["desom2_ant"],
+            df["distm2_ant"] - df["suspm2_ant"] - df["desom2_ant"],
             100,
         ),
         Meta4A=calcular_meta(
             df["julgm4_a"],
-            df["distm4_a"] + df["suspm4_a"],
+            df["distm4_a"] - df["suspm4_a"],
             100,
         ),
         Meta4B=calcular_meta(
             df["julgm4_b"],
-            df["distm4_b"] + df["suspm4_b"],
+            df["distm4_b"] - df["suspm4_b"],
             100,
         ),
     )
@@ -137,7 +138,7 @@ def adicionar_metas(df):
 
 def formatar_metas(df):
     df = df.copy()
-    for coluna in META_COLUMNS:
+    for coluna in COLUNAS_METAS:
         df[coluna] = df[coluna].map(lambda valor: f"{valor:.4f}")
     return df
 
@@ -156,7 +157,7 @@ def montar_concatenacao(df):
 def montar_resumo_municipios(df):
     resumo = (
         preparar_base(df)
-        .groupby("municipio_oj", as_index=False)[SUM_COLUMNS]
+        .groupby("municipio_oj", as_index=False)[COLUNAS_SOMA]
         .sum()
         .pipe(adicionar_metas)
         .rename(columns={"julgados_2026": "total_julgados_2026"})
@@ -165,13 +166,13 @@ def montar_resumo_municipios(df):
     )
 
     resumo["total_julgados_2026"] = resumo["total_julgados_2026"].round().astype(int)
-    return formatar_metas(resumo[["municipio_oj", "total_julgados_2026", *META_COLUMNS]])
+    return formatar_metas(resumo[["municipio_oj", "total_julgados_2026", *COLUNAS_METAS]])
 
 
 def montar_ranking_tribunais(df):
     ranking = (
         preparar_base(df)
-        .groupby("sigla_tribunal", as_index=False)[SUM_COLUMNS]
+        .groupby("sigla_tribunal", as_index=False)[COLUNAS_SOMA]
         .sum()
         .pipe(adicionar_metas)
         .sort_values(["Meta1", "sigla_tribunal"], ascending=[False, True])
@@ -179,7 +180,7 @@ def montar_ranking_tribunais(df):
         .reset_index(drop=True)
     )
 
-    return formatar_metas(ranking[["sigla_tribunal", *META_COLUMNS]])
+    return formatar_metas(ranking[["sigla_tribunal", *COLUNAS_METAS]])
 
 
 def montar_filtro_municipio(df, municipio):
@@ -191,91 +192,104 @@ def montar_filtro_municipio(df, municipio):
     return df.loc[filtro].reset_index(drop=True)
 
 
-def executar_transformacao(
+def gerar_arquivo(
     transformar,
     caminho_saida,
-    base_dir=BASE_DIR,
+    pasta_base=PASTA_BASE_PADRAO,
     paralelo=False,
     workers=None,
     municipio=None,
 ):
-    df = carregar_base(base_dir, paralelo, workers)
+    df = carregar_base(pasta_base, paralelo, workers)
     resultado = transformar(df) if municipio is None else transformar(df, municipio)
-    return salvar_csv(resultado, caminho_saida)
+    caminho = salvar_csv(resultado, caminho_saida)
+    return resultado, caminho
 
 
-def concatenar_arquivos_serial(base_dir=BASE_DIR, caminho_saida=None):
-    return executar_transformacao(
+def concatenar_arquivos_serial(pasta_base=PASTA_BASE_PADRAO, caminho_saida=None):
+    _, caminho = gerar_arquivo(
         montar_concatenacao,
-        caminho_saida or OUTPUT_DIR / "base_concatenada_serial.csv",
-        base_dir=base_dir,
+        caminho_saida or PASTA_SAIDA_PADRAO / "base_concatenada_serial.csv",
+        pasta_base=pasta_base,
     )
+    return caminho
 
 
-def concatenar_arquivos_paralelo(base_dir=BASE_DIR, caminho_saida=None, workers=None):
-    return executar_transformacao(
+def concatenar_arquivos_paralelo(pasta_base=PASTA_BASE_PADRAO, caminho_saida=None, workers=None):
+    _, caminho = gerar_arquivo(
         montar_concatenacao,
-        caminho_saida or OUTPUT_DIR / "base_concatenada_paralelo.csv",
-        base_dir=base_dir,
+        caminho_saida or PASTA_SAIDA_PADRAO / "base_concatenada_paralelo.csv",
+        pasta_base=pasta_base,
         paralelo=True,
         workers=workers,
     )
+    return caminho
 
 
-def gerar_resumo_municipios_serial(base_dir=BASE_DIR, caminho_saida=None):
-    return executar_transformacao(
+def gerar_resumo_municipios_serial(pasta_base=PASTA_BASE_PADRAO, caminho_saida=None):
+    _, caminho = gerar_arquivo(
         montar_resumo_municipios,
-        caminho_saida or OUTPUT_DIR / "resumo_municipios_serial.csv",
-        base_dir=base_dir,
+        caminho_saida or PASTA_SAIDA_PADRAO / "resumo_municipios_serial.csv",
+        pasta_base=pasta_base,
     )
+    return caminho
 
 
-def gerar_resumo_municipios_paralelo(base_dir=BASE_DIR, caminho_saida=None, workers=None):
-    return executar_transformacao(
+def gerar_resumo_municipios_paralelo(pasta_base=PASTA_BASE_PADRAO, caminho_saida=None, workers=None):
+    _, caminho = gerar_arquivo(
         montar_resumo_municipios,
-        caminho_saida or OUTPUT_DIR / "resumo_municipios_paralelo.csv",
-        base_dir=base_dir,
+        caminho_saida or PASTA_SAIDA_PADRAO / "resumo_municipios_paralelo.csv",
+        pasta_base=pasta_base,
         paralelo=True,
         workers=workers,
     )
+    return caminho
 
 
-def gerar_ranking_tribunais_serial(base_dir=BASE_DIR, caminho_saida=None):
-    return executar_transformacao(
+def gerar_ranking_tribunais_serial(pasta_base=PASTA_BASE_PADRAO, caminho_saida=None):
+    _, caminho = gerar_arquivo(
         montar_ranking_tribunais,
-        caminho_saida or OUTPUT_DIR / "ranking_tribunais_serial.csv",
-        base_dir=base_dir,
+        caminho_saida or PASTA_SAIDA_PADRAO / "ranking_tribunais_serial.csv",
+        pasta_base=pasta_base,
     )
+    return caminho
 
 
-def gerar_ranking_tribunais_paralelo(base_dir=BASE_DIR, caminho_saida=None, workers=None):
-    return executar_transformacao(
+def gerar_ranking_tribunais_paralelo(pasta_base=PASTA_BASE_PADRAO, caminho_saida=None, workers=None):
+    _, caminho = gerar_arquivo(
         montar_ranking_tribunais,
-        caminho_saida or OUTPUT_DIR / "ranking_tribunais_paralelo.csv",
-        base_dir=base_dir,
+        caminho_saida or PASTA_SAIDA_PADRAO / "ranking_tribunais_paralelo.csv",
+        pasta_base=pasta_base,
         paralelo=True,
         workers=workers,
     )
+    return caminho
 
 
-def filtrar_municipio_serial(municipio, base_dir=BASE_DIR, caminho_saida=None):
-    return executar_transformacao(
+def filtrar_municipio_serial(municipio, pasta_base=PASTA_BASE_PADRAO, caminho_saida=None):
+    resultado, caminho = gerar_arquivo(
         montar_filtro_municipio,
-        caminho_saida or OUTPUT_DIR / f"{nome_arquivo_municipio(municipio)}.csv",
-        base_dir=base_dir,
+        caminho_saida or PASTA_SAIDA_PADRAO / f"{nome_arquivo_municipio(municipio)}.csv",
+        pasta_base=pasta_base,
         municipio=municipio,
     )
+    if resultado.empty:
+        print("Nenhum registro encontrado para o municipio informado.")
+    return caminho
 
 
-def filtrar_municipio_paralelo(municipio, base_dir=BASE_DIR, caminho_saida=None, workers=None):
-    return executar_transformacao(
+def filtrar_municipio_paralelo(municipio, pasta_base=PASTA_BASE_PADRAO, caminho_saida=None, workers=None):
+    resultado, caminho = gerar_arquivo(
         montar_filtro_municipio,
-        caminho_saida or OUTPUT_DIR / f"{nome_arquivo_municipio(municipio)}.csv",
-        base_dir=base_dir,
+        caminho_saida or PASTA_SAIDA_PADRAO / f"{nome_arquivo_municipio(municipio)}.csv",
+        pasta_base=pasta_base,
         paralelo=True,
         workers=workers,
         municipio=municipio,
     )
+    if resultado.empty:
+        print("Nenhum registro encontrado para o municipio informado.")
+    return caminho
 
 
 def medir_tempo(funcao):
@@ -305,57 +319,57 @@ def pedir_municipio(municipio):
     return municipio
 
 
-def criar_operacao(acao, base_dir, output_dir, municipio, workers, separar_filtro=False):
+def criar_operacao(acao, pasta_base, pasta_saida, municipio, workers, separar_filtro=False):
     if acao == "concatenar":
         return (
             "Concatenar arquivos",
-            lambda: concatenar_arquivos_serial(base_dir, output_dir / "base_concatenada_serial.csv"),
-            lambda: concatenar_arquivos_paralelo(base_dir, output_dir / "base_concatenada_paralelo.csv", workers),
+            lambda: concatenar_arquivos_serial(pasta_base, pasta_saida / "base_concatenada_serial.csv"),
+            lambda: concatenar_arquivos_paralelo(pasta_base, pasta_saida / "base_concatenada_paralelo.csv", workers),
         )
 
     if acao == "resumo":
         return (
             "Resumo por municipio",
-            lambda: gerar_resumo_municipios_serial(base_dir, output_dir / "resumo_municipios_serial.csv"),
-            lambda: gerar_resumo_municipios_paralelo(base_dir, output_dir / "resumo_municipios_paralelo.csv", workers),
+            lambda: gerar_resumo_municipios_serial(pasta_base, pasta_saida / "resumo_municipios_serial.csv"),
+            lambda: gerar_resumo_municipios_paralelo(pasta_base, pasta_saida / "resumo_municipios_paralelo.csv", workers),
         )
 
     if acao == "ranking":
         return (
-            "Ranking de tribunais",
-            lambda: gerar_ranking_tribunais_serial(base_dir, output_dir / "ranking_tribunais_serial.csv"),
-            lambda: gerar_ranking_tribunais_paralelo(base_dir, output_dir / "ranking_tribunais_paralelo.csv", workers),
+            "Resumo dos 10 tribunais",
+            lambda: gerar_ranking_tribunais_serial(pasta_base, pasta_saida / "ranking_tribunais_serial.csv"),
+            lambda: gerar_ranking_tribunais_paralelo(pasta_base, pasta_saida / "ranking_tribunais_paralelo.csv", workers),
         )
 
     municipio_arquivo = nome_arquivo_municipio(municipio)
     if separar_filtro:
-        caminho_serial = output_dir / f"{municipio_arquivo}_serial.csv"
-        caminho_paralelo = output_dir / f"{municipio_arquivo}_paralelo.csv"
+        caminho_serial = pasta_saida / f"{municipio_arquivo}_serial.csv"
+        caminho_paralelo = pasta_saida / f"{municipio_arquivo}_paralelo.csv"
     else:
-        caminho_serial = output_dir / f"{municipio_arquivo}.csv"
-        caminho_paralelo = output_dir / f"{municipio_arquivo}.csv"
+        caminho_serial = pasta_saida / f"{municipio_arquivo}.csv"
+        caminho_paralelo = pasta_saida / f"{municipio_arquivo}.csv"
 
     return (
         "Filtro por municipio",
-        lambda: filtrar_municipio_serial(municipio, base_dir, caminho_serial),
-        lambda: filtrar_municipio_paralelo(municipio, base_dir, caminho_paralelo, workers),
+        lambda: filtrar_municipio_serial(municipio, pasta_base, caminho_serial),
+        lambda: filtrar_municipio_paralelo(municipio, pasta_base, caminho_paralelo, workers),
     )
 
 
-def gerar_relatorio(base_dir=BASE_DIR, output_dir=OUTPUT_DIR, municipio="", workers=None):
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
+def gerar_relatorio(pasta_base=PASTA_BASE_PADRAO, pasta_saida=PASTA_SAIDA_PADRAO, municipio="", workers=None):
+    pasta_saida = Path(pasta_saida)
+    pasta_saida.mkdir(parents=True, exist_ok=True)
     municipio = pedir_municipio(municipio)
 
     resultados = []
     for acao in ["concatenar", "resumo", "ranking", "filtrar"]:
         nome, funcao_serial, funcao_paralela = criar_operacao(
             acao,
-            base_dir,
-            output_dir,
+            pasta_base,
+            pasta_saida,
             municipio,
             workers,
-            separar_filtro=True,
+            separar_filtro=acao == "filtrar",
         )
         resultados.append((nome, *comparar_tempos(nome, funcao_serial, funcao_paralela)))
 
@@ -367,16 +381,16 @@ def gerar_relatorio(base_dir=BASE_DIR, output_dir=OUTPUT_DIR, municipio="", work
     for coluna in ["tempo_serial", "tempo_paralelo", "speedup"]:
         relatorio[coluna] = relatorio[coluna].map(lambda valor: f"{valor:.6f}")
 
-    caminho_relatorio = salvar_csv(relatorio, output_dir / "relatorio.csv")
+    caminho_relatorio = salvar_csv(relatorio, pasta_saida / "relatorio.csv")
     print(f"Relatorio gravado em: {caminho_relatorio}")
 
 
-def executar_acao(acao, modo, base_dir, output_dir, municipio, workers):
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
+def executar_acao(acao, modo, pasta_base, pasta_saida, municipio, workers):
+    pasta_saida = Path(pasta_saida)
+    pasta_saida.mkdir(parents=True, exist_ok=True)
 
     if acao == "relatorio":
-        gerar_relatorio(base_dir, output_dir, municipio, workers)
+        gerar_relatorio(pasta_base, pasta_saida, municipio, workers)
         return
 
     if acao == "filtrar":
@@ -384,8 +398,8 @@ def executar_acao(acao, modo, base_dir, output_dir, municipio, workers):
 
     nome, funcao_serial, funcao_paralela = criar_operacao(
         acao,
-        base_dir,
-        output_dir,
+        pasta_base,
+        pasta_saida,
         municipio,
         workers,
         separar_filtro=acao == "filtrar" and modo == "ambos",
@@ -404,12 +418,47 @@ def executar_acao(acao, modo, base_dir, output_dir, municipio, workers):
     comparar_tempos(nome, funcao_serial, funcao_paralela)
 
 
+def menu_interativo(pasta_base, pasta_saida, workers):
+    opcoes = {
+        "1": "concatenar",
+        "2": "resumo",
+        "3": "ranking",
+        "4": "filtrar",
+        "5": "relatorio",
+    }
+
+    while True:
+        print("\nTP01 - Manipulando arquivos CSV")
+        print("Todas as opcoes executam a versao serial e a paralela, exibindo o speedup.")
+        print("1 - Concatenar arquivos")
+        print("2 - Gerar resumo por municipio")
+        print("3 - Gerar resumo dos 10 tribunais com maior Meta1")
+        print("4 - Filtrar municipio")
+        print("5 - Gerar relatorio de tempos")
+        print("0 - Sair")
+
+        opcao = input("Escolha uma opcao: ").strip()
+        if opcao == "0":
+            break
+        if opcao not in opcoes:
+            print("Opcao invalida.")
+            continue
+
+        acao = opcoes[opcao]
+        municipio = ""
+
+        if acao in {"filtrar", "relatorio"}:
+            municipio = input("Municipio: ").strip()
+
+        executar_acao(acao, "ambos", pasta_base, pasta_saida, municipio, workers)
+
+
 def criar_parser():
     parser = argparse.ArgumentParser(description="TP01 - Manipulando arquivos CSV")
     parser.add_argument(
         "--acao",
-        choices=["relatorio", "concatenar", "resumo", "ranking", "filtrar"],
-        default="relatorio",
+        choices=["menu", "relatorio", "concatenar", "resumo", "ranking", "filtrar"],
+        default="menu",
     )
     parser.add_argument(
         "--modo",
@@ -417,19 +466,26 @@ def criar_parser():
         default="ambos",
     )
     parser.add_argument("--municipio", default="")
-    parser.add_argument("--base-dir", default=str(BASE_DIR))
-    parser.add_argument("--output-dir", default=str(OUTPUT_DIR))
+    parser.add_argument("--base-dir", default=str(PASTA_BASE_PADRAO))
+    parser.add_argument("--output-dir", default=str(PASTA_SAIDA_PADRAO))
     parser.add_argument("--workers", type=int, default=None)
     return parser
 
 
 def main():
     args = criar_parser().parse_args()
+    pasta_base = Path(args.base_dir)
+    pasta_saida = Path(args.output_dir)
+
+    if args.acao == "menu":
+        menu_interativo(pasta_base, pasta_saida, args.workers)
+        return
+
     executar_acao(
         args.acao,
         args.modo,
-        Path(args.base_dir),
-        Path(args.output_dir),
+        pasta_base,
+        pasta_saida,
         args.municipio,
         args.workers,
     )
