@@ -134,41 +134,31 @@ Por isso, os denominadores abaixo usam soma.
 ### Meta1
 
 ```text
-sum(julgados_2026)
-------------------------------------------------------------- * 100
-sum(casos_novos_2026) + sum(dessobrestados_2026) + sum(suspensos_2026)
+(sum(julgados_2026) / (sum(casos_novos_2026) + sum(dessobrestados_2026) + sum(suspensos_2026)) ) * 100
 ```
 
 ### Meta2A
 
 ```text
-sum(julgm2_a)
------------------------------------- * (1000 / 7)
-sum(distm2_a) + sum(suspm2_a)
+( sum(julgm2_a) / (sum(distm2_a) + sum(suspm2_a)) ) * (1000 / 7)
 ```
 
 ### Meta2Ant
 
 ```text
-sum(julgm2_ant)
--------------------------------------------------- * 100
-sum(distm2_ant) + sum(suspm2_ant) + sum(desom2_ant)
+( sum(julgm2_ant) / (sum(distm2_ant) + sum(suspm2_ant) + sum(desom2_ant)) ) * 100
 ```
 
 ### Meta4A
 
 ```text
-sum(julgm4_a)
------------------------------------- * 100
-sum(distm4_a) + sum(suspm4_a)
+( sum(julgm4_a) / (sum(distm4_a) + sum(suspm4_a)) ) * 100
 ```
 
 ### Meta4B
 
 ```text
-sum(julgm4_b)
------------------------------------- * 100
-sum(distm4_b) + sum(suspm4_b)
+( sum(julgm4_b) / (sum(distm4_b) + sum(suspm4_b)) ) * 100
 ```
 
 Quando algum denominador fica igual a zero, o programa retorna `0.0000` para
