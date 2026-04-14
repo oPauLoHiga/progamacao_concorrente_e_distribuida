@@ -8,7 +8,6 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from time import perf_counter
 
-
 PASTA_PROJETO = Path(__file__).resolve().parent
 PASTA_BASE_PADRAO = PASTA_PROJETO / "Base de Dados"
 PASTA_SAIDA_PADRAO = PASTA_PROJETO / "saida"
@@ -135,16 +134,14 @@ def juntar_totais(destino: dict[str, float], origem: dict[str, float]) -> None:
 
 
 def calcular_metas(totais: dict[str, float]) -> dict[str, float]:
-    meta1_den = (
-        totais["casos_novos_2026"]
-        + totais["dessobrestados_2026"]
-        + totais["suspensos_2026"]
-    )
+    meta1_den = ( totais["casos_novos_2026"] + totais["dessobrestados_2026"]+ totais["suspensos_2026"])
+
     meta2a_den = totais["distm2_a"] + totais["suspm2_a"]
-    meta2ant_den = (
-        totais["distm2_ant"] + totais["suspm2_ant"] + totais["desom2_ant"]
-    )
+
+    meta2ant_den = ( totais["distm2_ant"] + totais["suspm2_ant"] + totais["desom2_ant"])
+
     meta4a_den = totais["distm4_a"] + totais["suspm4_a"]
+
     meta4b_den = totais["distm4_b"] + totais["suspm4_b"]
 
     return {
@@ -239,9 +236,7 @@ def concatenar_arquivos_paralelo(
     workers: int | None = None,
 ) -> Path:
     arquivos = listar_csvs(pasta_base)
-    caminho_saida = preparar_saida(
-        caminho_saida or PASTA_SAIDA_PADRAO / "base_concatenada_paralelo.csv"
-    )
+    caminho_saida = preparar_saida(caminho_saida or PASTA_SAIDA_PADRAO / "base_concatenada_paralelo.csv")
 
     with arquivos[0].open("r", encoding=ENCODING_ENTRADA, newline="") as primeiro:
         cabecalho = primeiro.readline()
@@ -288,6 +283,7 @@ def gerar_resumo_municipios_serial(
     caminho_saida: Path | str | None = None,
 ) -> Path:
     grupos = agrupar_serial(pasta_base, "municipio_oj")
+
     return escrever_resumo_municipios(
         grupos,
         caminho_saida or PASTA_SAIDA_PADRAO / "resumo_municipios_serial.csv",
@@ -300,6 +296,7 @@ def gerar_resumo_municipios_paralelo(
     workers: int | None = None,
 ) -> Path:
     grupos = agrupar_paralelo(pasta_base, "municipio_oj", workers)
+
     return escrever_resumo_municipios(
         grupos,
         caminho_saida or PASTA_SAIDA_PADRAO / "resumo_municipios_paralelo.csv",
@@ -343,6 +340,7 @@ def gerar_ranking_tribunais_serial(
     caminho_saida: Path | str | None = None,
 ) -> Path:
     grupos = agrupar_serial(pasta_base, "sigla_tribunal")
+
     return escrever_ranking_tribunais(
         grupos,
         caminho_saida or PASTA_SAIDA_PADRAO / "ranking_tribunais_serial.csv",

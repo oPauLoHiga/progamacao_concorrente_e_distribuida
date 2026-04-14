@@ -7,8 +7,6 @@ Distribuida. A ideia principal foi ler varios arquivos CSV da base da Justica
 Eleitoral, juntar e resumir esses dados, e comparar uma solucao serial com uma
 solucao paralela.
 
-O projeto foi feito em Python e usa apenas bibliotecas padrao da linguagem.
-
 ## 2. O que foi implementado
 
 O enunciado pediu quatro funcionalidades. No codigo, cada uma delas tem uma
@@ -30,11 +28,8 @@ Os arquivos principais para entrega sao:
 - `tp01_arquivos.py`: codigo-fonte do trabalho;
 - `DOCUMENTACAO.md`: esta documentacao.
 
-Tambem existe um `.gitignore` para evitar que a base de dados, arquivos gerados
-e caches sejam enviados por engano.
-
-O enunciado pede para enviar apenas os arquivos fonte
-desenvolvidos. Por isso, os arquivos CSV da base, arquivos de saida e o PDF do
+Tambem existe um `.gitignore`.
+Os arquivos CSV da base, arquivos de saida e o PDF do
 enunciado nao foram enviados como parte do codigo.
 
 ## 4. Base de dados
@@ -56,7 +51,7 @@ base estiver em outro lugar, basta passar o caminho usando `--base-dir`.
 
 ## 5. Como o codigo foi organizado
 
-O arquivo `tp01_arquivos.py` foi separado em partes:
+O arquivo `tp01_arquivos.py` foi separado nessas partes:
 
 - funcoes auxiliares para abrir arquivos, converter numeros e normalizar texto;
 - funcao de calculo das metas;
@@ -67,7 +62,7 @@ O arquivo `tp01_arquivos.py` foi separado em partes:
 - funcoes para medir tempo e executar o benchmark;
 - menu interativo e argumentos de linha de comando.
 
-Essa divisao foi feita para deixar mais facil encontrar cada parte do trabalho
+Essa divisao foi feita para deixar mais  bem estruturado com facil acesso para encontrar cada parte do trabalho
 e para separar a versao serial da versao paralela.
 
 ## 6. Funcionalidades
@@ -133,7 +128,7 @@ municipio, por exemplo `MACAPA.txt`.
 
 ## 7. Formulas usadas
 
-Ao desenvolver os calculos, todas as subtracoes deveriam ser trocadas por adicoes. 
+otodas as subtracoes deveriam ser trocadas por adicoes. 
 Por isso, os denominadores abaixo usam soma.
 
 ### Meta1
@@ -257,15 +252,14 @@ disco e da quantidade de workers.
 
 ## 12. Analise dos resultados
 
-No teste realizado, a concatenacao ficou mais rapida na versao paralela. Isso
+No texte realizado, a concatenacao ficou mais rapida na versao paralela. Isso
 faz sentido porque a tarefa depende bastante de leitura de arquivos.
 
 Nas outras funcionalidades, a versao paralela ficou mais lenta. Acredito que
 isso aconteceu porque a base nao e tao grande para compensar a sobrecarga de
-criar workers, dividir o trabalho e juntar os resultados no final.
+criar trabalho, dividir o trabalho e juntar os resultados no final.
 
-Mesmo assim, a versao paralela foi mantida porque ela cumpre o objetivo do
-trabalho e mostra como a base pode ser processada por partes independentes.
+a versao paralela  mostra como a base pode ser processada por partes independentes.
 
 ## 13. Verificacao
 
@@ -279,7 +273,7 @@ Na ultima verificacao:
 
 ## 14. Conclusao
 
-Foram implementadas as quatro funcionalidades pedidas, com versoes seriais e paralelas, calculo das metas,
+Foram implementadas as quatro funcionalidades, com versoes seriais e paralelas, calculo das metas,
 medicao de tempo e calculo de speedup.
 
 A principal observacao dos testes e que paralelizar nem sempre deixa o programa
