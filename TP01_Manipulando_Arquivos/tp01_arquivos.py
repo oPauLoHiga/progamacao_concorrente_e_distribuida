@@ -3,7 +3,6 @@ import unicodedata
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from time import perf_counter
-
 import pandas as pd
 
 
