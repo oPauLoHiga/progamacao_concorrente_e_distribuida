@@ -86,6 +86,8 @@ Dependendo da execucao, o programa pode gerar:
 - `NOME_DO_MUNICIPIO.csv`
 - `NOME_DO_MUNICIPIO_serial.csv`
 - `NOME_DO_MUNICIPIO_paralelo.csv`
+- pasta `filtros_municipios_serial`
+- pasta `filtros_municipios_paralelo`
 - `relatorio.csv`
 
 Quando o filtro e executado em apenas um modo, o nome do arquivo fica no
@@ -93,6 +95,10 @@ formato `NOME_DO_MUNICIPIO.csv`.
 
 Quando o filtro e comparado nos dois modos, os arquivos ficam separados em
 `_serial.csv` e `_paralelo.csv`.
+
+No `relatorio.csv`, a funcionalidade de filtro gera automaticamente uma pasta
+com um arquivo para cada municipio na versao serial e outra pasta equivalente
+na versao paralela.
 
 ## 7. Formulas usadas
 
@@ -104,7 +110,7 @@ assim:
 ```text
 sum(julgados_2026)
 ------------------------------------------------------------- * 100
-sum(casos_novos_2026) - sum(dessobrestados_2026) - sum(suspensos_2026)
+sum(casos_novos_2026) + sum(dessobrestados_2026) - sum(suspensos_2026)
 ```
 
 ### Meta2A
@@ -162,13 +168,13 @@ python tp01_arquivos.py
 ```
 
 No menu, todas as opcoes executam automaticamente a versao serial e a versao
-paralela da funcionalidade escolhida, exibindo tambem o speedup. No caso do
-filtro e do relatorio, o programa pede o municipio no terminal.
+paralela da funcionalidade escolhida, exibindo tambem o speedup. Apenas a
+opcao de filtro por municipio pede esse valor no terminal.
 
 Para gerar todos os arquivos e o `relatorio.csv`:
 
 ```powershell
-python tp01_arquivos.py --acao relatorio --municipio NOME_DO_MUNICIPIO
+python tp01_arquivos.py --acao relatorio
 ```
 
 Para executar apenas uma funcionalidade:
@@ -178,7 +184,7 @@ python tp01_arquivos.py --acao concatenar --modo ambos
 python tp01_arquivos.py --acao resumo --modo ambos
 python tp01_arquivos.py --acao ranking --modo ambos
 python tp01_arquivos.py --acao filtrar --modo serial --municipio NOME_DO_MUNICIPIO
-python tp01_arquivos.py --acao relatorio --modo ambos --municipio NOME_DO_MUNICIPIO
+python tp01_arquivos.py --acao relatorio --modo ambos
 ```
 
 Tambem e possivel mudar a pasta da base e a pasta de saida:
@@ -189,7 +195,8 @@ python tp01_arquivos.py --acao relatorio --output-dir "C:\temp\saida_tp01"
 ```
 
 Se o municipio nao for informado no filtro, o programa pede esse valor no
-terminal.
+terminal. O relatorio nao precisa de entrada manual, porque testa o filtro com
+todos os municipios da base.
 
 ## 9. Relatorio de tempos
 
@@ -213,18 +220,20 @@ Interpretacao:
 
 ## 10. Resultado da execucao de teste
 
-Na validacao final do programa, usando o municipio `BRASILEIA` no filtro e no
-relatorio, os tempos obtidos foram:
+Na validacao final do programa, usando o relatorio completo com todos os
+municipios da base no teste da quarta funcionalidade, os tempos obtidos foram:
 
 | Funcionalidade | Serial (s) | Paralelo (s) | Speedup |
 |---|---:|---:|---:|
-| Concatenar arquivos | 1.5961 | 1.6131 | 0.9894 |
-| Resumo por municipio | 4.3793 | 4.1083 | 1.0660 |
-| Resumo dos 10 tribunais | 4.1761 | 4.0677 | 1.0267 |
-| Filtro por municipio | 0.8585 | 0.7764 | 1.1058 |
+| Concatenar arquivos | 1.7117 | 1.5817 | 1.0822 |
+| Resumo por municipio | 3.9882 | 3.8965 | 1.0235 |
+| Resumo dos 10 tribunais | 3.9647 | 3.9152 | 1.0126 |
+| Filtro por municipio | 10.0073 | 10.2656 | 0.9748 |
 
 As saidas seriais e paralelas tiveram o mesmo conteudo nas quatro
-funcionalidades, mudando apenas o tempo de execucao.
+funcionalidades, mudando apenas o tempo de execucao. No caso do relatorio, o
+teste do filtro gerou 1.997 arquivos na pasta serial e 1.997 arquivos na pasta
+paralela.
 
 ## 11. Pros e contras
 
@@ -270,6 +279,8 @@ O trabalho ficou atendendo exatamente as quatro funcionalidades pedidas, com
 versao serial e versao paralela para cada uma.
 
 Na validacao final desta versao com `pandas`, a versao paralela ficou melhor em
-tres funcionalidades e muito proxima da serial na concatenacao. O principal
-objetivo do trabalho foi mantido: resolver as quatro funcionalidades, comparar
-os tempos e calcular o speedup de forma simples e organizada.
+concatenacao, resumo por municipio e resumo dos 10 tribunais. No teste completo
+do filtro por municipio, que gera um arquivo para cada municipio da base, a
+versao serial ficou ligeiramente melhor. O principal objetivo do trabalho foi
+mantido: resolver as quatro funcionalidades, comparar os tempos e calcular o
+speedup de forma simples e organizada.

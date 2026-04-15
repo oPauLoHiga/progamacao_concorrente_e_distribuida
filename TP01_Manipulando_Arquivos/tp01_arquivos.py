@@ -110,7 +110,7 @@ def adicionar_metas(df):
     return df.assign(
         Meta1=calcular_meta(
             df["julgados_2026"],
-            df["casos_novos_2026"] - df["dessobrestados_2026"] - df["suspensos_2026"],
+            df["casos_novos_2026"] + df["dessobrestados_2026"] - df["suspensos_2026"],
             100,
         ),
         Meta2A=calcular_meta(
@@ -190,6 +190,38 @@ def montar_filtro_municipio(df, municipio):
     municipio_normalizado = normalizar_texto(municipio)
     filtro = df["municipio_oj"].fillna("").map(normalizar_texto) == municipio_normalizado
     return df.loc[filtro].reset_index(drop=True)
+
+
+def agrupar_municipios(df):
+    if "municipio_oj" not in df:
+        return []
+
+    base = df.copy()
+    base["_municipio_arquivo"] = base["municipio_oj"].fillna("").map(nome_arquivo_municipio)
+
+    grupos = []
+    for nome_arquivo, grupo in base.groupby("_municipio_arquivo", sort=True):
+        grupos.append((nome_arquivo, grupo.drop(columns=["_municipio_arquivo"]).reset_index(drop=True)))
+    return grupos
+
+
+def salvar_filtros_municipios(df, pasta_saida, paralelo=False, workers=None):
+    pasta_saida = Path(pasta_saida)
+    pasta_saida.mkdir(parents=True, exist_ok=True)
+    grupos = agrupar_municipios(df)
+
+    def salvar_grupo(item):
+        nome_arquivo, grupo = item
+        salvar_csv(grupo, pasta_saida / f"{nome_arquivo}.csv")
+
+    if paralelo:
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            list(executor.map(salvar_grupo, grupos))
+    else:
+        for item in grupos:
+            salvar_grupo(item)
+
+    return pasta_saida
 
 
 def gerar_arquivo(
@@ -292,6 +324,25 @@ def filtrar_municipio_paralelo(municipio, pasta_base=PASTA_BASE_PADRAO, caminho_
     return caminho
 
 
+def gerar_filtros_municipios_serial(pasta_base=PASTA_BASE_PADRAO, pasta_saida=None):
+    df = carregar_base(pasta_base, paralelo=False)
+    return salvar_filtros_municipios(
+        df,
+        pasta_saida or PASTA_SAIDA_PADRAO / "filtros_municipios_serial",
+        paralelo=False,
+    )
+
+
+def gerar_filtros_municipios_paralelo(pasta_base=PASTA_BASE_PADRAO, pasta_saida=None, workers=None):
+    df = carregar_base(pasta_base, paralelo=True, workers=workers)
+    return salvar_filtros_municipios(
+        df,
+        pasta_saida or PASTA_SAIDA_PADRAO / "filtros_municipios_paralelo",
+        paralelo=True,
+        workers=workers,
+    )
+
+
 def medir_tempo(funcao):
     inicio = perf_counter()
     caminho_saida = funcao()
@@ -356,22 +407,32 @@ def criar_operacao(acao, pasta_base, pasta_saida, municipio, workers, separar_fi
     )
 
 
-def gerar_relatorio(pasta_base=PASTA_BASE_PADRAO, pasta_saida=PASTA_SAIDA_PADRAO, municipio="", workers=None):
+def gerar_relatorio(pasta_base=PASTA_BASE_PADRAO, pasta_saida=PASTA_SAIDA_PADRAO, workers=None):
     pasta_saida = Path(pasta_saida)
     pasta_saida.mkdir(parents=True, exist_ok=True)
-    municipio = pedir_municipio(municipio)
 
     resultados = []
-    for acao in ["concatenar", "resumo", "ranking", "filtrar"]:
-        nome, funcao_serial, funcao_paralela = criar_operacao(
-            acao,
-            pasta_base,
-            pasta_saida,
-            municipio,
-            workers,
-            separar_filtro=acao == "filtrar",
-        )
+    for acao in ["concatenar", "resumo", "ranking"]:
+        nome, funcao_serial, funcao_paralela = criar_operacao(acao, pasta_base, pasta_saida, "", workers)
         resultados.append((nome, *comparar_tempos(nome, funcao_serial, funcao_paralela)))
+
+    resultados.append(
+        (
+            "Filtro por municipio",
+            *comparar_tempos(
+                "Filtro por municipio",
+                lambda: gerar_filtros_municipios_serial(
+                    pasta_base,
+                    pasta_saida / "filtros_municipios_serial",
+                ),
+                lambda: gerar_filtros_municipios_paralelo(
+                    pasta_base,
+                    pasta_saida / "filtros_municipios_paralelo",
+                    workers,
+                ),
+            ),
+        )
+    )
 
     relatorio = pd.DataFrame(
         resultados,
@@ -390,7 +451,7 @@ def executar_acao(acao, modo, pasta_base, pasta_saida, municipio, workers):
     pasta_saida.mkdir(parents=True, exist_ok=True)
 
     if acao == "relatorio":
-        gerar_relatorio(pasta_base, pasta_saida, municipio, workers)
+        gerar_relatorio(pasta_base, pasta_saida, workers)
         return
 
     if acao == "filtrar":
@@ -447,7 +508,7 @@ def menu_interativo(pasta_base, pasta_saida, workers):
         acao = opcoes[opcao]
         municipio = ""
 
-        if acao in {"filtrar", "relatorio"}:
+        if acao == "filtrar":
             municipio = input("Municipio: ").strip()
 
         executar_acao(acao, "ambos", pasta_base, pasta_saida, municipio, workers)
