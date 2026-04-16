@@ -5,9 +5,3 @@ Base de Dados/
 # Saidas geradas pelo programa
 saida/
 *.csv
-*.txt
-*.zip
-
-# Cache do Python
-__pycache__/
-*.py[cod]

@@ -5,7 +5,6 @@ from pathlib import Path
 from time import perf_counter
 import pandas as pd
 
-
 PASTA_BASE_PADRAO = Path(__file__).parent / "Base de Dados"
 PASTA_SAIDA_PADRAO = Path(__file__).parent / "saida"
 ENCODING_LEITURA = "utf-8-sig"
@@ -550,6 +549,6 @@ def main():
         args.workers,
     )
 
-
+## Start
 if __name__ == "__main__":
     main()
