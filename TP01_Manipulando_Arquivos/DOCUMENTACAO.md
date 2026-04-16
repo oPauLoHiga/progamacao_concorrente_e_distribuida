@@ -6,10 +6,10 @@ Este trabalho foi desenvolvido para a disciplina de Programacao Concorrente e
 Distribuida.
 
 A proposta foi trabalhar com os arquivos CSV da base de dados, implementar as
-quatro funcionalidades pedidas no enunciado e comparar uma versao serial com
+quatro funcionalidades pedidas e comparar uma versao serial com
 uma versao paralela em cada caso.
 
-Nesta versao final, o codigo foi simplificado com o uso da biblioteca `pandas`,
+Nesta versao , o codigo foi feito com o uso da biblioteca `pandas`,
 que deixou a leitura, a concatenacao, os agrupamentos e a gravacao dos arquivos
 mais diretos.
 
@@ -21,13 +21,12 @@ Foram implementadas as seguintes funcionalidades:
 2. gerar um resumo por `municipio_oj` com `julgados_2026`, `Meta1`, `Meta2A`,
    `Meta2Ant`, `Meta4A` e `Meta4B`;
 3. gerar um resumo com os 10 tribunais de maior `Meta1`, em ordem decrescente;
-4. filtrar a base a partir de um municipio informado pelo usuario e gerar um
+4. filtrar a partir de um municipio informado pelo usuario e gerar um
    arquivo CSV somente com as ocorrencias desse municipio.
 
 Para cada funcionalidade existe uma versao serial e uma versao paralela.
 
-O programa tambem possui um menu interativo, atendendo ao pedido de interface
-presente no enunciado.
+O programa tambem possui um menu interativo.
 
 ## 3. Arquivos da entrega
 
@@ -36,12 +35,10 @@ Os arquivos principais da entrega sao:
 - `tp01_arquivos.py`
 - `DOCUMENTACAO.md`
 
-O `.gitignore` foi mantido para evitar envio acidental da base de dados,
-arquivos de saida e outros arquivos temporarios.
+O `.gitignore` foi mantido para evitar o vasamento de dados,
+base de dados, arquivos de saida e outros arquivos temporarios.
 
 ## 4. Estrutura do codigo
-
-O codigo foi deixado de forma propositalmente simples.
 
 As funcoes principais sao:
 
@@ -83,32 +80,20 @@ Dependendo da execucao, o programa pode gerar:
 - `resumo_municipios_paralelo.csv`
 - `ranking_tribunais_serial.csv`
 - `ranking_tribunais_paralelo.csv`
-- `NOME_DO_MUNICIPIO.csv`
 - `NOME_DO_MUNICIPIO_serial.csv`
 - `NOME_DO_MUNICIPIO_paralelo.csv`
 - pasta `filtros_municipios_serial`
 - pasta `filtros_municipios_paralelo`
 - `relatorio.csv`
 
-Quando o filtro e executado em apenas um modo, o nome do arquivo fica no
-formato `NOME_DO_MUNICIPIO.csv`.
-
-Quando o filtro e comparado nos dois modos, os arquivos ficam separados em
-`_serial.csv` e `_paralelo.csv`.
-
-No `relatorio.csv`, a funcionalidade de filtro gera automaticamente uma pasta
-com um arquivo para cada municipio na versao serial e outra pasta equivalente
-na versao paralela.
-
 ## 7. Formulas usadas
 
-Os calculos seguem as formulas do enunciado visivel. Os denominadores ficaram
-assim:
+Os calculos seguem as formulas.
 
 ### Meta1
 
 ```text
-sum(julgados_2026)
+                        sum(julgados_2026)
 ------------------------------------------------------------- * 100
 sum(casos_novos_2026) + sum(dessobrestados_2026) - sum(suspensos_2026)
 ```
@@ -116,15 +101,15 @@ sum(casos_novos_2026) + sum(dessobrestados_2026) - sum(suspensos_2026)
 ### Meta2A
 
 ```text
-sum(julgm2_a)
+            sum(julgm2_a)
 ------------------------------------ * (1000 / 7)
-sum(distm2_a) - sum(suspm2_a)
+       sum(distm2_a) - sum(suspm2_a)
 ```
 
 ### Meta2Ant
 
 ```text
-sum(julgm2_ant)
+                sum(julgm2_ant)
 -------------------------------------------------- * 100
 sum(distm2_ant) - sum(suspm2_ant) - sum(desom2_ant)
 ```
@@ -132,7 +117,7 @@ sum(distm2_ant) - sum(suspm2_ant) - sum(desom2_ant)
 ### Meta4A
 
 ```text
-sum(julgm4_a)
+        sum(julgm4_a)
 ------------------------------------ * 100
 sum(distm4_a) - sum(suspm4_a)
 ```
@@ -140,7 +125,7 @@ sum(distm4_a) - sum(suspm4_a)
 ### Meta4B
 
 ```text
-sum(julgm4_b)
+        sum(julgm4_b)
 ------------------------------------ * 100
 sum(distm4_b) - sum(suspm4_b)
 ```
@@ -149,11 +134,7 @@ Quando o denominador fica zero, o programa retorna `0.0000`.
 
 ## 8. Como executar
 
-Antes de executar, e necessario ter o `pandas` instalado:
-
-```powershell
-python -m pip install pandas
-```
+Antes de executar, e necessario ter as bibliotecas instaladas:
 
 Depois disso, abra o terminal na pasta do trabalho:
 
@@ -161,42 +142,32 @@ Depois disso, abra o terminal na pasta do trabalho:
 cd TP01_Manipulando_Arquivos
 ```
 
-Para usar o menu interativo:
+Para usar o menu interativo(main):
 
 ```powershell
 python tp01_arquivos.py
 ```
 
 No menu, todas as opcoes executam automaticamente a versao serial e a versao
-paralela da funcionalidade escolhida, exibindo tambem o speedup. Apenas a
-opcao de filtro por municipio pede esse valor no terminal.
+paralela da funcionalidade escolhida, exibindo tambem o speedup.
 
-Para gerar todos os arquivos e o `relatorio.csv`:
+acao concatenar 
+acao resumo 
+acao ranking 
+acao filtrar 
+relatorio 
+sair
 
-```powershell
-python tp01_arquivos.py --acao relatorio
-```
-
-Para executar apenas uma funcionalidade:
-
-```powershell
-python tp01_arquivos.py --acao concatenar --modo ambos
-python tp01_arquivos.py --acao resumo --modo ambos
-python tp01_arquivos.py --acao ranking --modo ambos
-python tp01_arquivos.py --acao filtrar --modo serial --municipio NOME_DO_MUNICIPIO
-python tp01_arquivos.py --acao relatorio --modo ambos
-```
 
 Tambem e possivel mudar a pasta da base e a pasta de saida:
 
-```powershell
-python tp01_arquivos.py --acao relatorio --base-dir "C:\caminho\para\Base de Dados"
-python tp01_arquivos.py --acao relatorio --output-dir "C:\temp\saida_tp01"
+```
+base-dir "C:\caminho\para\Base de Dados"
+output-dir "C:\temp\saida_tp01"
 ```
 
 Se o municipio nao for informado no filtro, o programa pede esse valor no
-terminal. O relatorio nao precisa de entrada manual, porque testa o filtro com
-todos os municipios da base.
+terminal. Concatenar,resumo,ranking e relatorio não tem entrada, porque usa todos os municipios da base.
 
 ## 9. Relatorio de tempos
 
@@ -235,39 +206,35 @@ funcionalidades, mudando apenas o tempo de execucao. No caso do relatorio, o
 teste do filtro gerou 1.997 arquivos na pasta serial e 1.997 arquivos na pasta
 paralela.
 
-## 11. Pros e contras
+## 11. Pros e Contras
 
 ### Versao serial
 
 Pros:
-
 - codigo mais simples;
 - menor sobrecarga;
 - leitura mais facil;
 - depuracao mais tranquila.
 
 Contras:
-
 - processa um arquivo por vez;
 - tende a aproveitar menos a maquina quando a carga cresce.
 
 ### Versao paralela
 
 Pros:
-
 - processa varios arquivos ao mesmo tempo;
 - pode melhorar o tempo em cenarios com mais leitura e mais volume de dados;
-- com `pandas`, o codigo continua enxuto mesmo com a comparacao entre os modos.
+- com `pandas`, o codigo continua "simples" mesmo com a comparacao entre os modos.
 
 Contras:
-
 - tem mais sobrecarga;
 - em bases menores pode ficar mais lenta;
 - exige mais cuidado para juntar os resultados parciais.
 
 ## 12. Observacao sobre a biblioteca usada
 
-O uso do `pandas` deixou o codigo menor, mais legivel e mais facil de manter.
+O uso do `pandas` deixou o codigo mais legivel e mais facil.
 
 Por outro lado, ele adiciona uma dependencia externa ao projeto. Entao, para
 executar o trabalho em outro computador, e necessario instalar essa biblioteca
@@ -275,12 +242,7 @@ antes.
 
 ## 13. Conclusao
 
-O trabalho ficou atendendo exatamente as quatro funcionalidades pedidas, com
-versao serial e versao paralela para cada uma.
-
-Na validacao final desta versao com `pandas`, a versao paralela ficou melhor em
-concatenacao, resumo por municipio e resumo dos 10 tribunais. No teste completo
-do filtro por municipio, que gera um arquivo para cada municipio da base, a
-versao serial ficou ligeiramente melhor. O principal objetivo do trabalho foi
-mantido: resolver as quatro funcionalidades, comparar os tempos e calcular o
-speedup de forma simples e organizada.
+Na validacao final, a versao paralela ficou melhor em
+concatenacao, resumo por municipio e resumo dos 10 tribunais. 
+No teste completo do filtro por municipio, que gera um arquivo para cada municipio da base,
+a versao serial ficou ligeiramente melhor.
