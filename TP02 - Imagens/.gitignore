@@ -1,0 +1,33 @@
+# Mantem os arquivos essenciais do TP02 versionaveis.
+!24101911.py
+!README.md
+!requirements.txt
+!.gitignore
+
+# Saidas geradas localmente.
+saida_imagens/
+
+# Imagens locais usadas em testes ou geradas pelo programa.
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.gif
+*.tif
+*.tiff
+*.webp
+
+# Cache e ambiente Python.
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Arquivos temporarios de sistema/editor.
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+*.tmp
