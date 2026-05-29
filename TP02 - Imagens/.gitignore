@@ -1,7 +1,6 @@
 # Mantem os arquivos essenciais do TP02 versionaveis.
 !24101911.py
 !README.md
-!requirements.txt
 !.gitignore
 
 # Saidas geradas localmente.
@@ -23,11 +22,3 @@ __pycache__/
 .venv/
 venv/
 env/
-
-# Arquivos temporarios de sistema/editor.
-.DS_Store
-Thumbs.db
-.idea/
-.vscode/
-*.log
-*.tmp
