@@ -1,0 +1,60 @@
+Log do laboratorio de impressao 3D
+[20:22:21] Servidor central recebeu os arquivos pendentes.
+[20:22:21] Professor encontrou a fila vazia e chamou o servidor.
+[20:22:21] Pos-graduacao 1 aguardou a fila ser reabastecida.
+[20:22:21] Pos-graduacao 2 aguardou a fila ser reabastecida.
+[20:22:21] Graduacao 1 aguardou a fila ser reabastecida.
+[20:22:21] Graduacao 2 aguardou a fila ser reabastecida.
+[20:22:21] Servidor reabasteceu a fila com: ARQ-001, ARQ-005, ARQ-008, ARQ-012
+[20:22:21] Professor iniciou a impressao de ARQ-001 (professor, Prof. Ana).
+[20:22:21] Pos-graduacao 1 iniciou a impressao de ARQ-005 (professor, Prof. Bruno).
+[20:22:21] Pos-graduacao 2 iniciou a impressao de ARQ-008 (professor, Prof. Carla).
+[20:22:21] Graduacao 1 iniciou a impressao de ARQ-012 (professor, Prof. Denise).
+[20:22:21] Graduacao 2 encontrou a fila vazia e chamou o servidor.
+[20:22:21] Graduacao 1 terminou a impressao de ARQ-012.
+[20:22:21] Graduacao 1 aguardou a fila ser reabastecida.
+[20:22:21] Pos-graduacao 1 terminou a impressao de ARQ-005.
+[20:22:21] Pos-graduacao 1 aguardou a fila ser reabastecida.
+[20:22:21] Professor terminou a impressao de ARQ-001.
+[20:22:21] Professor aguardou a fila ser reabastecida.
+[20:22:21] Servidor reabasteceu a fila com: ARQ-003, ARQ-006, ARQ-010, ARQ-013
+[20:22:21] Professor iniciou a impressao de ARQ-003 (pos-graduacao, Mestranda Bia).
+[20:22:21] Pos-graduacao 1 iniciou a impressao de ARQ-006 (pos-graduacao, Doutoranda Eva).
+[20:22:21] Graduacao 1 iniciou a impressao de ARQ-010 (pos-graduacao, Mestrando Hugo).
+[20:22:21] Graduacao 2 iniciou a impressao de ARQ-013 (pos-graduacao, Doutorando Joao).
+[20:22:21] Pos-graduacao 2 terminou a impressao de ARQ-008.
+[20:22:21] Pos-graduacao 2 encontrou a fila vazia e chamou o servidor.
+[20:22:21] Graduacao 1 terminou a impressao de ARQ-010.
+[20:22:21] Graduacao 1 aguardou a fila ser reabastecida.
+[20:22:21] Pos-graduacao 1 terminou a impressao de ARQ-006.
+[20:22:21] Pos-graduacao 1 aguardou a fila ser reabastecida.
+[20:22:21] Graduacao 2 terminou a impressao de ARQ-013.
+[20:22:21] Graduacao 2 aguardou a fila ser reabastecida.
+[20:22:21] Professor terminou a impressao de ARQ-003.
+[20:22:21] Professor aguardou a fila ser reabastecida.
+[20:22:21] Servidor reabasteceu a fila com: ARQ-002, ARQ-004, ARQ-007, ARQ-009
+[20:22:21] Graduacao 2 iniciou a impressao de ARQ-002 (graduacao, Aluno Carlos).
+[20:22:21] Pos-graduacao 1 iniciou a impressao de ARQ-004 (graduacao, Aluno Davi).
+[20:22:21] Professor iniciou a impressao de ARQ-007 (graduacao, Aluno Felipe).
+[20:22:21] Graduacao 1 iniciou a impressao de ARQ-009 (graduacao, Aluno Gabi).
+[20:22:21] Pos-graduacao 2 encontrou a fila vazia e chamou o servidor.
+[20:22:21] Graduacao 2 terminou a impressao de ARQ-002.
+[20:22:21] Graduacao 2 aguardou a fila ser reabastecida.
+[20:22:21] Professor terminou a impressao de ARQ-007.
+[20:22:21] Professor aguardou a fila ser reabastecida.
+[20:22:21] Graduacao 1 terminou a impressao de ARQ-009.
+[20:22:21] Graduacao 1 aguardou a fila ser reabastecida.
+[20:22:21] Servidor reabasteceu a fila com: ARQ-011, ARQ-014, ARQ-015
+[20:22:21] Pos-graduacao 2 iniciou a impressao de ARQ-011 (graduacao, Aluno Igor).
+[20:22:21] Graduacao 2 iniciou a impressao de ARQ-014 (graduacao, Aluna Lara).
+[20:22:21] Professor iniciou a impressao de ARQ-015 (graduacao, Aluno Mateus).
+[20:22:21] Graduacao 1 encerrou porque nao existem mais arquivos.
+[20:22:21] Servidor central encerrado.
+[20:22:21] Pos-graduacao 1 terminou a impressao de ARQ-004.
+[20:22:21] Pos-graduacao 1 encerrou porque nao existem mais arquivos.
+[20:22:21] Professor terminou a impressao de ARQ-015.
+[20:22:21] Professor encerrou porque nao existem mais arquivos.
+[20:22:21] Pos-graduacao 2 terminou a impressao de ARQ-011.
+[20:22:21] Pos-graduacao 2 encerrou porque nao existem mais arquivos.
+[20:22:21] Graduacao 2 terminou a impressao de ARQ-014.
+[20:22:21] Graduacao 2 encerrou porque nao existem mais arquivos.
